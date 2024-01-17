@@ -1,0 +1,332 @@
+  {% comment %}
+  Renders a megamenu for the header.
+
+  Usage:
+  {% render 'header-mega-menu' %}
+{% endcomment %}
+
+<nav class="header__inline-menu">
+  <ul class="list-menu list-menu--inline" role="list">
+    {%- for link in section.settings.menu.links -%}
+
+      {%- assign mega_menu_block = '' -%}
+      {%- assign is_mega_menu = false -%}
+      {%- assign downcase_title = link.title | downcase | strip -%}
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+         {%- when 'mega_menu' -%}
+          {%- assign downcase_block_menu_item = block.settings.menu_item | downcase | strip -%}                
+          {%- if downcase_block_menu_item == downcase_title -%}                  
+            {%- assign is_mega_menu = true -%}
+            {%- assign mega_menu_block = block -%}
+            {%- break -%}
+          {%- endif -%}
+        {%- endcase -%}
+     {%- endfor -%}
+    
+      <li>
+        {%- if link.links != blank -%}
+          <header-menu>
+            <details id="Details-HeaderMenu-{{ forloop.index }}" class="mega-menu">
+              <summary
+                id="HeaderMenu-{{ link.handle }}"
+                class="header__menu-item list-menu__item link focus-inset"
+              >
+                <span
+                  {%- if link.child_active %}
+                    class="header__active-menu-item"
+                  {% endif %}
+                >
+                  {{- link.title | escape -}}
+                </span>
+                {% render 'icon-caret' %}
+              </summary>
+              <div
+                id="MegaMenu-Content-{{ forloop.index }}"
+                class="mega-menu__content color-{{ section.settings.menu_color_scheme }} gradient motion-reduce global-settings-popup"
+                tabindex="-1"
+              >
+              <div class="inner_megamenu page-width">
+               {% if is_mega_menu %}
+                  {% if mega_menu_block.settings.heading != blank %}
+                  <div class="megamenu-heading">
+                    <h2>{{ mega_menu_block.settings.heading }}</h2>                            
+                  </div>
+                  {% endif %}
+                {% endif %}
+                
+                {% if mega_menu_block.settings.is_custom_menu %} 
+                <div class="custommegamenu">
+                <ul
+                  class="mega-menu__list page-width{% if link.levels == 1 %} mega-menu__list--condensed{% endif %}"
+                  role="list"
+                >
+                  {%- for childlink in link.links -%}
+                    <li>
+                      <a
+                        id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}" href="{{ childlink.url }}" class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}" {% if childlink.current %} aria-current="page" {% endif %} >
+                        {% assign collection = childlink.object %}                                    
+                        {% if collection.featured_image != blank %}
+                        <img
+                          srcset="
+                            {%- if collection.featured_image.width >= 165 -%}{{ collection.featured_image | image_url: width: 165 }} 165w,{%- endif -%}
+                            {%- if collection.featured_image.width >= 360 -%}{{ collection.featured_image | image_url: width: 360 }} 360w,{%- endif -%}
+                            {%- if collection.featured_image.width >= 533 -%}{{ collection.featured_image | image_url: width: 533 }} 533w,{%- endif -%}
+                            {%- if collection.featured_image.width >= 720 -%}{{ collection.featured_image | image_url: width: 720 }} 720w,{%- endif -%}
+                            {%- if collection.featured_image.width >= 940 -%}{{ collection.featured_image | image_url: width: 940 }} 940w,{%- endif -%}
+                            {%- if collection.featured_image.width >= 1066 -%}{{ collection.featured_image | image_url: width: 1066 }} 1066w,{%- endif -%}
+                            {{ collection.featured_image | image_url }} {{ collection.featured_image.width }}w
+                          "
+                          src="{{ collection.featured_image | image_url: width: 533 }}"
+                          sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: 4 }}px, (min-width: 990px) calc((100vw - 130px) / 4), (min-width: 750px) calc((100vw - 120px) / 3), calc((100vw - 35px) / 2)"
+                          alt=""
+                          class="motion-reduce"
+                          loading="lazy"
+                          width="{{ collection.featured_image.width }}"
+                          height="{{ collection.featured_image.height }}"
+                        >
+                        {% endif %}
+                        <p class="megamenu-child-title">{{ childlink.title | escape }}</p>
+                      </a>
+                      {%- if childlink.links != blank -%}
+                        <ul class="list-unstyled" role="list">
+                          {%- for grandchildlink in childlink.links -%}
+                            <li>
+                              <a
+                                id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                                href="{{ grandchildlink.url }}"
+                                class="mega-menu__link link{% if grandchildlink.current %} mega-menu__link--active{% endif %}"
+                                {% if grandchildlink.current %}
+                                  aria-current="page"
+                                {% endif %}
+                              >
+                                {{ grandchildlink.title | escape }}
+                              </a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      {%- endif -%}
+                    </li>
+                  {%- endfor -%}
+                  {% if mega_menu_block.settings.see_all != blank %}
+                  <div class="see-all-collection">
+                  <a class="see-all-megamenu" href="{{ mega_menu_block.settings.see_all }}">{% render 'see-all-icon' %}
+                    <p class="megamenu-child-title">See All</p>
+                  </a>
+                     <!-- <p class="megamenu-child-title">See All</p> -->
+                  </div>
+                 {% endif %}
+                </ul>
+                 </div>
+              {% else %}     
+                <ul
+                  class="mega-menu__list page-width{% if link.levels == 1 %} mega-menu__list--condensed{% endif %}"
+                  role="list"
+                >
+                  {%- for childlink in link.links -%}
+                    <li>
+                      <a
+                        id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                        href="{{ childlink.url }}"
+                        class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}"
+                        {% if childlink.current %}
+                          aria-current="page"
+                        {% endif %}
+                      >
+                        {{ childlink.title | escape }}
+                      </a>
+                      {%- if childlink.links != blank -%}
+                        <ul class="list-unstyled" role="list">
+                          {%- for grandchildlink in childlink.links -%}
+                            <li>
+                              <a
+                                id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                                href="{{ grandchildlink.url }}"
+                                class="mega-menu__link link{% if grandchildlink.current %} mega-menu__link--active{% endif %}"
+                                {% if grandchildlink.current %}
+                                  aria-current="page"
+                                {% endif %}
+                              >
+                                {{ grandchildlink.title | escape }}
+                              </a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      {%- endif -%}
+                    </li>
+                  {%- endfor -%}
+                </ul>
+                {% endif %}
+                </div>
+              </div>
+            </details>
+          </header-menu>
+        {%- else -%}
+          <a
+            id="HeaderMenu-{{ link.handle }}"
+            href="{{ link.url }}"
+            class="header__menu-item list-menu__item link link--text focus-inset"
+            {% if link.current %}
+              aria-current="page"
+            {% endif %}
+          >
+            <span
+              {%- if link.current %}
+                class="header__active-menu-item"
+              {% endif %}
+            >
+              {{- link.title | escape -}}
+            </span>
+          </a>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+</nav>
+
+
+<style>
+  /* megamenu */
+.custommegamenu .mega-menu__list.page-width {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+  gap: 2rem 2rem;
+}
+img.motion-reduce.megamenu-coll-image {
+  max-width: 115px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  height: 90px;
+  object-fit: scale-down;
+}
+p.megamenu-child-title {
+  text-align: center;
+  color: #000;
+}
+.mega-menu__link:hover, .mega-menu__link--active {
+  font-weight: bold;
+}
+.mega-menu__link--level-2 {
+    color: #000 !important;
+}
+  .inner_megamenu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.header__menu-item {
+    text-transform: uppercase;
+}
+list-menu--inline li a {
+    text-decoration: none;
+}
+  
+.see-all-megamenu {
+    width: 100%;
+    background:#fff;
+    justify-content: center;
+    align-items: center;
+}
+
+@media screen and (max-width: 1200px) {
+ .custommegamenu .mega-menu__list li a img {
+    width: 100%;
+  } 
+  .inner_megamenu {
+      display: grid;
+      grid-template-columns: 20% 80%;
+  }  
+  ul.mega-menu__list {
+      padding: 0;
+  }
+  .see-all-megamenu svg {
+      width: 100%;
+  }
+   .header__menu-item {
+    padding: 1.2rem 0.6rem;
+} 
+}
+</style>
+
+
+<!-- schema add mouse hover script -->
+
+<script>  
+   let items = document.querySelectorAll(".mega-menu")
+    var delayInMilliseconds = 50;
+    console.log({
+        megamenu: items
+    })
+    items.forEach(item => {
+        
+        const content = item.querySelector('.mega-menu__content');
+          item.addEventListener("mouseover", () => {
+              item.setAttribute("open", true);
+          });
+        
+          item.addEventListener("mouseleave", () => {
+              let close = true;
+              content.addEventListener("mouseover", () => {
+                  close = false;
+              });
+              
+              setTimeout(function() {
+              if(close == true)
+              {
+                  
+                  item.removeAttribute("open");
+              }
+              else
+              {
+                    
+                    item.setAttribute("open", true);
+              }
+              }, delayInMilliseconds);     
+              // setTimeout(1000, () => { 
+                  
+              //     if (close) item.removeAttribute("open");
+              // });
+        });
+    
+        content.addEventListener("mouseleave", () => {
+                item.removeAttribute("open");
+        });
+        
+    });
+</script>
+
+
+<!-- schema header liquid  -->
+"blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "mega_menu",
+      "name": "Mega Menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_item",
+          "label": "Menu Name"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_custom_menu",          
+          "label": "Custom Menu"
+        },
+        {
+          "type": "url",
+          "id": "see_all",          
+          "label": "See All Button"
+        }
+      ]
+    }
+  ]
