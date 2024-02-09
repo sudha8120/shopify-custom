@@ -1,0 +1,705 @@
+
+
+===================== page id =============
+
+Add the current page title to the body class
+
+<body id="{{ page_title | handleize }}" class={{ template }}{% if template == "product" %} {{ product.handle }}{% endif %}">
+
+=================== Page Id css section template ====================
+
+rich-text-{{ section.id }}
+
+css=>	{%- style -%}
+		  .rich-text-{{ section.id }} h2{
+		    font-family: {{section.settings.font_family}}!important;
+		    font-weight: {{section.settings.custom_font_weight}}!important;
+		    font-style: {{section.settings.custom_font_style}}!important;
+		    font-size: {{ section.settings.font_size }}px !important;
+		}
+		  .rich-text-{{ section.id }} a{
+		    font-size: {{ section.settings.font_size }}px !important;
+		}
+		  .section-{{ section.id }}-padding {
+		    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+		    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+		  }
+
+		  @media screen and (min-width: 750px) {
+		    .section-{{ section.id }}-padding {
+		      padding-top: {{ section.settings.padding_top }}px;
+		      padding-bottom: {{ section.settings.padding_bottom }}px;
+		    }
+		  }
+		{%- endstyle -%}
+
+    SCHEMA=>
+
+		 {
+        "type": "select", 
+        "id": "font_family",
+        "options": [
+          {
+            "value": "Open Sans",
+            "label": "Open Sans"
+          },
+          {
+            "value": "Bebas Neue",
+            "label": "Bebas Neue"
+          }
+        ],
+        "default": "Bebas Neue",
+        "label": "Bebas Neue"
+	      },
+	      {
+          "type": "select",
+          "id": "custom_font_weight",
+          "label": "Font weight",
+          "default": "400",
+          "options": [ 
+            {
+              "value": "bold",
+              "label": "Bold"
+            },
+            {
+              "value": "100",
+              "label": "100"
+            },         
+          ]
+        },
+        {
+          "type": "select",
+          "id": "custom_font_style",
+          "label": "Font style",
+          "default": "normal",
+          "options": [
+            
+            {
+              "value": "normal",
+              "label": "Normal"
+            },
+            {
+              "value": "italic",
+              "label": "Italic"
+            }
+          ]
+        },
+       {
+        "type": "range",
+        "id": "font_size",
+        "min": 16,
+        "max": 100,
+        "unit": "px",
+        "step": 1,
+        "default": 20,
+        "label": "Font Size"
+      },
+
+=================== 
+
+
+product page variation metafield -
+
+     <div class="add_ons">
+          <input type="hidden" id="main_price" value="{{ product.selected_or_first_available_variant.price }}">
+          <h4 class="">
+            <span>Add Ons</span>
+          </h4>
+          <div class="main_addon">
+          {% for field in product.metafields.custom.add_on.value %}
+            <div class="add_on_item" vprice="{{ field.price }}" vid="{{ field.selected_or_first_available_variant.id }}">{{ field.title }} - {{ field.price | money_with_currency }} </div>
+          {% endfor %}
+          </div>
+ </div>
+
+
+
+========================== slider slick ==============
+
+https://stackoverflow.com/questions/72295915/shopify-slick-carousel-with-dynamic-image-blocks
+https://codepen.io/ghanshyam-patel/pen/xxgQBzB
+
+
+====================== checkbox condition ================
+
+ {% if block.settings.show_description == true %}
+                      {{ product.description}}
+                    {% else %}
+                      {{ block.settings.content }}
+ {% endif %}
+
+
+
+https://cheat.markdunkley.com/
+
+
+================================= whatasp link--
+setting section schema
+    {
+        "type": "text",
+        "id": "social_whatsapp_link",
+        "label": "whatsapp",
+        "info": "whatsapp"
+      },
+
+
+======================== ui elemente ordere cart====================
+https://ui-elements-generator.myshopify.com/pages/methods-of-payment
+
+
+========================= gift price ==============
+
+https://help.shopify.com/en/manual/online-store/themes/themes-by-shopify/vintage-themes/customizing-vintage-themes/add-gift-wrap-option#create-a-gift-wrap-product
+
+
+work on --- magazin  
+Zur Produktformulierung
+
+
+=======================
+https://itslinuxfoss.com/update-nodejs-version-ubuntu-command-line/
+
+
+======================= Mobile imagae coed=====
+
+ <!-- mobile banner image-->
+   1.     {%- if block.settings.image_1 -%}
+            {%- liquid
+              assign height = block.settings.image.width | divided_by: block.settings.image.aspect_ratio | round
+              if section.settings.image_behavior == 'ambient'
+                assign sizes = '120vw'
+                assign widths = '450, 660, 900, 1320, 1800, 2136, 2400, 3600, 7680'
+              else
+                assign sizes = '100vw'
+                assign widths = '375, 550, 750, 1100, 1500, 1780, 2000, 3000, 3840'
+              endif
+            -%}
+            {{
+              block.settings.image_1
+              | image_url: width: 3840
+              | image_tag: loading: 'lazy', height: height, sizes: sizes, widths: widths
+            }}
+         {%- else -%}
+            {%- assign placeholder_slide = forloop.index | modulo: 2 -%}
+            {%- if placeholder_slide == 1 -%}
+              {{ 'hero-apparel-2' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- else -%}
+              {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+        {%- endif -%}
+
+
+  2.   schema image picker
+
+
+collection.metafields.custom.shop_by_collection
+collection.metafields.custom.shop_by_collection
+
+=======COLLECTION PAGE METAFIELD CONDITION  AND HOW TO SHOW=============
+
+step-1 crete collection metafiled list
+
+step-2 {% assign collection_grid = collection.metafields.custom.shop.value %}
+
+step-3  <div class="container">
+        {% if request.path != '/collections/all' %}
+        <ul class="collection-list-top">
+          {%- for card_collection in collection_grid -%} 
+            <li class="colection-list-item"><a class="colection-list-btn" href="{{ card_collection.url }}"> {{ card_collection.title | escape }} </a></li>
+          {% endfor %}
+        </ul>
+        {% else %}
+          <ul class="colection-menu-nav">
+          {% for link in section.settings.collections_menu.links %}
+            <li class="colection-list-item">
+              <a class="colection-list-btn" href="{{ link.url }}">{{ link.title }}</a>
+            </li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+
+
+step-4  navbar schema add
+
+     <!--  hide comment -->
+      {% comment %}{%- if _section.collections_menu != blank and section.settings.collections_menu_style != 'links' -%}
+        <div class="container">
+          {%- render 'collections-menu', class: 'small-hide medium-hide' -%} 
+        </div>
+      {%- endif -%}{% endcomment %}
+
+======================= dawn theme mega manu categry image add==========
+
+header-dropdown-menu.liquid 
+line no. 36
+<li>{%- if childlink.type == 'collection_link' -%} {% assign linkCollection = childlink.object %} <div class="nav-collection_image"> <img crossorigin="anonymous" class="nav-child-link-image" src="{{linkCollection.products.first.featured_image.src | product_img_url: '140x'}}" alt="{{grandchild_link.title}}"> </div> {%- endif -%}
+
+<a></a><
+/li>
+                   
+ 
+ ============== shopify collection tab -===============
+ https://community.shopify.com/c/shopify-design/create-a-collection-tabs-for-my-shopify-page/m-p/2127753
+ https://jadepuma.com/blogs/shopify-tutorials/how-to-add-tabs-to-any-page-template-in-flex
+
+
+ ========================== product list value metafield==
+
+ https://support.metafields.guru/support/solutions/articles/44001935861
+
+
+==============================
+Product Short Description
+
+code ----
+<h3><b>Short description</b></h3>
+{% assign short_description = product.metafields.custom.product_short_description.value %}
+<div class="product-description-short">
+{{ short_description }}
+</div>
+
+
+
+
+===================== add to cart page ridirect 
+
+<form method="post" action="/cart/add">
+
+  <input type="hidden" name="id" value="{{ product.variants.first.id }}" />
+
+  <input min="1" type="number" id="quantity" name="quantity" value="1"/>
+
+  <input type="submit" value="Add to cart" class="btn" />
+
+</form>
+
+
+===================================
+
+
+https://community.shopify.com/c/shopify-design/accordion-with-shopify-s-dawn-theme/td-p/1339698
+
+****************** Menu child dropdown list code ******************
+
+for loop inside-
+ {%- for link in llists -%}
+            <li class="menu-item{% if link.active %} current{% endif %}"><a href="{{ link.url }}">{%- render 'tt_inc',title:link.title -%}</a>
+                          {% if link.links != blank %}
+                          <ul class="customchild">
+                            {% for child_link in link.links %}  
+                            <li><a href= "{{ child_link.url }}">{{ child_link.title }}</a>
+                            {% if child_link.links != blank %}
+                              <ul class="grandchild">
+                              {% for grandchild_link in child_link.links %}  
+                                <li><a href= "{{ grandchild_link.url }}">{{ grandchild_link.title }}</a></li>
+                              {% endfor %}
+                              </ul>
+                            {% endif %}   
+                            </li>
+                            {% endfor %}
+                          </ul> 
+                        {% endif %}        
+                        </li>
+{%- endfor -%}
+
+
+****************** child dropdownlist -code here *****************
+
+                        {% if link.links != blank %}
+                          <ul class="customchild">
+                            {% for child_link in link.links %}  
+                            <li><a href= "{{ child_link.url }}">{{ child_link.title }}</a>
+                            {% if child_link.links != blank %}
+                              <ul class="grandchild">
+                              {% for grandchild_link in child_link.links %}  
+                                <li><a href= "{{ grandchild_link.url }}">{{ grandchild_link.title }}</a></li>
+                              {% endfor %}
+                              </ul>
+                            {% endif %}   
+                            </li>
+                            {% endfor %}
+                          </ul> 
+  {% endif %} 
+
+  =============================== Product page accordition descritption condition
+
+   {% if block.settings.show_description == true %}
+      {{ product.description}}
+      {% else %}
+      {{ block.settings.content }}
+   {% endif %}
+
+schema--
+    {
+     "type": "checkbox",
+     "id": "show_description",
+     "default": false,
+     "label": "Description by default"
+     },
+*********************8 if else condition ********
+{% if coll_image != blank %}                     
+                  <div class="custm_collectionimage">
+                   <img class="cst-img" src="{{ coll_image | img_url:'master' }}" alt="collectionimage" >
+                  </div>
+            
+                {% else %}    
+
+************** Image list metafield *********
+
+{% assign images= product.metafields.custom.customers_unique_add_image.value %}
+<div class="product-cst-uniq-selling">
+  <div class="container">    
+  {{ product.metafields.custom.customers_unique_selling | metafield_tag }}
+  <div class="customers_unique_add_image">
+    <ul>
+   {% for media in images %}
+     <li><img src="{{ media | img_url:'master' }}"></li>
+   {% endfor %}
+   </ul>
+  </div>
+  </div> 
+</div>
+
+************** video meta tag ******
+
+https://community.shopify.com/c/shopify-design/adding-faq-section-in-dawn-theme/td-p/1417800
+
+faq-footer-title
+product.metafields.custom.product_faq_title
+product.metafields.custom.product_faq_content
+
+{% assign images= product.metafields.custom.customers_unique_add_image.value %}
+<div class="product-cst-uniq-selling">
+  <div class="container">    
+  {{ product.metafields.custom.customers_unique_selling | metafield_tag }}
+  <div class="customers_unique_add_image">
+    <ul>
+   {% for media in images %}
+     <li><img src="{{ media | img_url:'master' }}"></li>
+   {% endfor %}
+   </ul>
+  </div>
+  </div> 
+</div>
+
+
+
+    <div class="video-tag">    
+      <div class="product-cst-uniq-selling">
+        <div class="container aa">
+        {{ product.metafields.custom.product_video.value }}     
+        </div> 
+      </div>
+    </div>
+
+============== custom select =======
+
+
+************ video play pause and play ***************8
+link - https://jsfiddle.net/esedic/umpkqnt7/
+
+
+
+*********************** product slider *******
+https://mrdigitals.com/custom-testimonial-section-in-dawn-theme-shopify-copy-paste-code-without-app/
+https://made4uo-preview-2.myshopify.com/account/login
+https://jabwebsolution.com/how-to-create-product-slider-in-shopify-dawn-theme/
+https://mrdigitals.com/how-to-add-featured-product-slider-to-your-shopify-store/
+
+9098863513
+
+
+https://codepen.io/anishde12020/pen/poWPPoe?editors=1010
+https://codepen.io/matthewcain/pen/ZepbeR?editors=0110
+AMETHYST CLUSTERS
+
+**************** Add a Back to top button on long pages
+https://help.shopify.com/en/manual/online-store/themes/themes-by-shopify/vintage-themes/customizing-vintage-themes/add-back-to-top
+
+https://alanryan.dev/tips/video-background-dawn-theme/#:~:text=Create%20a%20new%20section%20file,liquid%20.&text=Upload%20a%20video%20in%20the,overelay%20the%20video%20if%20required.
+
+
+https://www.awesomescreenshot.com/video/21696682?key=6be50163e90f3236f142417ab9ce0b58
+https://codepen.io/magraytariq/pen/QWOrBQE?editors=1010
+
+
+ {%- if section.settings.show_collection_image and collection.image -%}
+      <div class="collection-hero__image-container media gradient">
+        <img
+          srcset="
+            {%- if collection.image.width >= 165 -%}{{ collection.image | image_url: width: 165 }} 165w,{%- endif -%}
+            {%- if collection.image.width >= 360 -%}{{ collection.image | image_url: width: 360 }} 360w,{%- endif -%}
+            {%- if collection.image.width >= 535 -%}{{ collection.image | image_url: width: 535 }} 535w,{%- endif -%}
+            {%- if collection.image.width >= 750 -%}{{ collection.image | image_url: width: 750 }} 750w,{%- endif -%}
+            {%- if collection.image.width >= 1070 -%}{{ collection.image | image_url: width: 1070 }} 1070w,{%- endif -%}
+            {%- if collection.image.width >= 1500 -%}{{ collection.image | image_url: width: 1500 }} 1500w,{%- endif -%}
+            {{ collection.image | image_url }} {{ collection.image.width }}w
+          "
+          src="{{ collection.image | image_url: width: 750 }}"
+          sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 100 | divided_by: 2 }}px, (min-width: 750px) calc(50vw - 130px), calc(50vw - 55px)"
+          alt=""
+          width="{{ collection.image.width }}"
+          height="{{ collection.image.height }}"
+        >
+      </div>
+    {%- endif -%}
+
+
+    https://ezfycode.com/blog/search-bar-always-visible-tutorial
+
+
+    =slider dektop condition ==========
+
+
+
+
+<!-- produt page vertical slider  -->
+https://aliecommerce.in/blogs/news/how-to-create-a-product-image-slider-on-dawn-theme
+https://community.shopify.com/c/shopify-discussions/how-to-add-different-image-for-mobile-in-slideshow-dawn-theme-7/m-p/1974809
+
+review -- code
+
+<p>Location: {{ card_product.metafields.custom.location.value }}</p>
+
+============================
+
+https://stackoverflow.com/questions/47591904/redirect-button-directly-to-checkout
+
+*******************buy bow button ajax throught *******************
+
+{%- if show_dynamic_checkout -%}
+       <button  onclick="add_to_cart_grid('{{ product.variants.first.id }}','1')" class="btn to button buynow-btn button--full-width product-form__buttons">BUY NOW</button>
+     
+{%- endif -%} 
+
+          <script>
+function add_to_cart_grid(variantid,qty){
+        var id = variantid;
+        var q = qty;
+        var ajax = {
+                type: "POST",
+                url: "/cart/add.js",
+                data: "quantity=" + q + "&id=" + id,
+                dataType: "json",
+                success: function (n) {
+                  // alert();
+                     window.location.href = '/checkout'; 
+                },
+                error: function (n, c) {
+                      console.log('fail');
+                }
+          };
+        jQuery.ajax(ajax)
+    }
+</script>
+
+
+
+
+***************** blocj backgroud color 
+{%- for block in section.blocks -%}
+          
+  .card-color-{{ block.id }} .bgcolor{
+    background-color: {{ block.settings.color_bg }};
+  }
+{% endfor %}
+
+schem a--
+      {
+        "type": "color",
+        "id": "color_bg",
+        "label": "Background Color"
+       }, 
+
+
+    
+%%
+<!--  slider  -->
+
+https://codepen.io/chintalkreya/pen/KKQRNer?editors=1000
+ https://codepen.io/ehsantl/pen/QKGMoV?editors=1100
+ https://codepen.io/kelum/pen/PoNwdGE
+ https://community.shopify.com/c/shopify-design/rich-text-collection-metafield-output/td-p/1955126
+
+
+https://community.shopify.com/c/shopify-design/add-slick-slider-for-related-product-dawn-theme/m-p/2072632
+https://stackoverflow.com/questions/75113228/slick-slider-doesnt-work-with-shopify-dawns-product-recommendation-section
+https://alanryan.dev/tips/video-background-dawn-theme/#:~:text=Create%20a%20new%20section%20file,liquid%20.&text=Upload%20a%20video%20in%20the,overelay%20the%20video%20if%20required.
+
+
+  {% if collection.metafields.custom.menu_collection_image != blank %}
+                         <img
+                                srcset="
+                                  {%- if collection.metafields.custom.menu_collection_image.width >= 165 -%}{{ collection.metafields.custom.menu_collection_image | image_url: width: 165 }} 165w,{%- endif -%}
+                                  {%- if collection.metafields.custom.menu_collection_image.width >= 360 -%}{{ collection.metafields.custom.menu_collection_image | image_url: width: 360 }} 360w,{%- endif -%}
+                                  {%- if collection.metafields.custom.menu_collection_image.width >= 533 -%}{{ collection.metafields.custom.menu_collection_image | image_url: width: 533 }} 533w,{%- endif -%}
+                                  {%- if collection.metafields.custom.menu_collection_image.width >= 720 -%}{{ collection.metafields.custom.menu_collection_image | image_url: width: 720 }} 720w,{%- endif -%}
+                                  {%- if collection.metafields.custom.menu_collection_image.width >= 940 -%}{{ collection.metafields.custom.menu_collection_image | image_url: width: 940 }} 940w,{%- endif -%}
+                                  {%- if collection.metafields.custom.menu_collection_image.width >= 1066 -%}{{ collection.metafields.custom.menu_collection_image | image_url: width: 1066 }} 1066w,{%- endif -%}
+                                 
+                                "
+                                src="{{ collection.metafields.custom.menu_collection_image | image_url: width: 1500 }}"
+                                sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: 4 }}px, (min-width: 990px) calc((100vw - 130px) / 4), (min-width: 750px) calc((100vw - 120px) / 3), calc((100vw - 35px) / 2)"
+                                alt=""
+                                class="motion-reduce coll-img metaimg"
+                                loading="lazy"
+                                width="{{ ccollection.metafields.custom.menu_collection_image.width }}"
+                                height="{{ collection.metafields.custom.menu_collection_image.height }}"
+                              >     
+                            {%- endif -%} 
+
+                            https://shopify-support.krownthemes.com/article/795-product-card#Product-badges-_KIdK
+
+
+==============================  Mega menu hover click - 
+
+https://community.shopify.com/c/shopify-design/open-drop-down-to-mega-menu-on-hover-in-dawn-theme/m-p/1754347    
+https://stackoverflow.com/questions/41905363/show-half-of-next-slide-without-center-mode-in-slick-slider
+https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column
+
+=================== active class js 
+
+https://codepen.io/figarali/pen/araWdP
+
+ ====================read more 
+ https://foolishdeveloper.com/create-a-read-more-read-less-button-using-html-css/
+ https://ui-elements-generator.myshopify.com/pages/cart-attribute
+
+ ======================  How To Add Sticky Bar on Product Page – Dawn Theme Shopify ==========
+
+ https://websensepro.com/blog/how-to-add-sticky-bar-on-product-page-dawn-theme-shopify/
+
+ =============  Add a Text Field To Products page - Gift Notes, Engravings, Customizable Products, etc
+
+ https://ed.codes/blog/add-a-text-field-to-products-in-shopify-2-0-gift-notes-engravings-customizable-products-etc
+
+ https://codepen.io/haikelfazzani-the-bold/pen/gOPxNLx
+
+====================================
+
+https://shopify.dev/docs/themes/customer-engagement/add-contact-form
+
+ balca1@mac.com
+
+
+ =================== smmoth active center slick slider============
+
+ https://codepen.io/ghanshyam-patel/pen/BapGxEq
+ https://codepen.io/ianjamieson/pen/RwPXWvm
+
+
+
+
+*******************  meta ta shopify product page ******************************8
+
+
+ <title>
+      {{ page_title }}
+      {% comment %}
+      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {% endcomment %}
+      {%- unless page_title contains shop.name %} By {{ shop.name }}{% endunless -%}
+    </title>
+
+    {% if page_description %}
+      {% if template == "product" %}
+        <meta name="description" content="Explore Our Exclusive collection of {{ product.title }} at an affordable price By {{ shop.name }}">
+      {% else %}
+        <meta name="description" content="{{ page_description | escape }}{%- unless page_title contains shop.name %} By {{ shop.name }}{% endunless -%}">
+      {% endif %}
+    {% endif %}
+
+    {% render 'meta-tags' %}
+
+
+
+    ***********************====
+
+    https://help.shopify.com/en/manual/online-store/themes/customizing-themes/add-date-picker
+    https://shopify.dev/docs/themes/customer-engagement/add-contact-form#required-input
+    https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types
+    https://stackoverflow.com/questions/57316033/how-to-add-date-time-picker-in-shopify-section-setting
+    https://www.pdf2go.com/result#j=96619fd1-f6c0-4183-8840-c8a1977e5ddd
+    Client Intake Form
+
+    ******************************* 
+
+
+{% assign description_words = product.description | split: ' ' %}
+{% assign word_count = description_words | size %}
+
+<p>Word count: {{ word_count }}</p>
+
+
+node js updat e lik================
+https://askubuntu.com/questions/426750/how-can-i-update-my-nodejs-to-the-latest-version
+https://www.huratips.com/tech-tips/how-to-create-marquee-text-scrolling-direction-is-right-to-left-or-vice-versa-in-shopify.html
+
+
+SHIFT + TAB =   BACK TAB 
+TAB = RIGHT 
+
+************************** meta field video vpload 
+   {% assign media = collection.metafields.custom.banner_video_n3.value %}
+                    {% if media.media_type == 'video' %}
+                    {{ media | video_tag: image_size: 'master', controls: false, autoplay: true }}
+  {% endif %}
+
+************************* multiple slider
+
+https://codepen.io/disjointed/pen/QoxWQg
+
+
+
+
+**************** change block schema and color 
+
+main-section add id class- text_color-{{ section.id }}
+
+add cass--
+ {% style %}    
+ {% for block in section.blocks %}
+        #section-id-{{ section.id }} .slide-{{ forloop.index }} .line-1 {
+          {%- assign title_size_medium = block.settings.title_size | times: 0.7 | at_least: settings.font_size_heading_int -%}
+          font-size: {{ title_size_medium }}px;
+          color: {{ block.settings.text_color }};
+        }
+        #section-id-{{ section.id }} .slide-{{ forloop.index }} .line-2 {
+           color: {{ block.settings.text_color }};
+        }
+        #section-id-{{ section.id }} .slide-{{ forloop.index }} .feature-subheader {
+           color: {{ block.settings.text_color }};
+        }
+      {% endfor %}
+
+       {% for block in section.blocks %}
+        #section-id-{{ section.id }} .slide-{{ forloop.index }} .line-1 {        
+          color: {{ block.settings.text_color }};
+        }
+        #section-id-{{ section.id }} .slide-{{ forloop.index }} .line-2 {
+           color: {{ block.settings.text_color }};
+        }
+        #section-id-{{ section.id }} .slide-{{ forloop.index }} .feature-subheader {
+           color: {{ block.settings.text_color }};
+        }
+      {% endfor %}
+ {% endstyle %}
+ 8889906917
+
+ ****************************
+
+ 1. https://rihisilver.com/
+2. https://glorious-skincare.com/
+3. bikolether  shre preview- https://uyoezgza1uqbc94o-84856504619.shopifypreview.com
+4. https://lestroispyramides.com/
+5. https://saafgarments.com/
+6. https://xypler.com/  - Dawn 
+7. https://9bd82c-2.myshopify.com/ 
+8. https://functionallabs.co.uk/  - Motion
+9. https://www.mrbur.com/  - theme-dame -Local
+10.https://elliesearth.ca/  - Dawn 
+11. https://sassyslick.com/  - Ella - Multipurpose Shopify Theme
+12. https://denshotdogs.com/ - Canopy
+13  https://denshotdogs.com/
