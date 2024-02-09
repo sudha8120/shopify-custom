@@ -1,0 +1,66 @@
+
+
+step1 - carete metafield 
+		.Product Icon first
+		product.metafields.custom.product_icon_first
+
+		Product content first
+		product.metafields.custom.product_content_first		
+
+		Product Icon two
+		product.metafields.custom.product_icon_two
+
+		Product content two
+		product.metafields.custom.product_content_two
+
+		Product Icon three
+		product.metafields.custom.product_icon_three
+
+		Product content Three
+		product.metafields.custom.product_content_three
+
+step 2- assign product page 
+
+step 3- render product page 
+
+code- crete a new snippet - product-icon
+		<style>
+		  .product-icon {
+		    display: flex;
+		    flex-wrap: wrap;
+		    justify-content: center;
+		    gap: 15px;
+		        text-align: center;
+		  }
+		  .prodct-img img {
+		      width: 100%;
+		      max-width: 100px;
+		  }
+		  .product-icon p {
+		    margin: 0px;
+		}
+		  .prodct-img img {
+		    width: 100%;
+		    height: 100px;
+		    object-fit: cover;
+		    max-width: 100px;
+		}
+		</style>
+		{% assign images= product.metafields.custom.product_icon_first %}
+		{% assign images2= product.metafields.custom.product_icon_two %}
+		{% assign images3= product.metafields.custom.product_icon_three %}
+
+		<div class="product-icon">
+		  <div class="icon_1">  
+		    <div class="prodct-img"> <img src="{{ images | img_url:'master' }}"></div>     
+		    <p>{{ product.metafields.custom.product_content_first.value }}</p>
+		  </div>
+		  <div class="icon_1">  
+		    <div class="prodct-img"> <img src="{{ images2 | img_url:'master' }}"></div>     
+		    <p>{{ product.metafields.custom.product_content_two.value }}</p>
+		  </div>
+		  <div class="icon_1">  
+		    <div class="prodct-img"> <img src="{{ images3 | img_url:'master' }}"></div>     
+		    <p>{{ product.metafields.custom.product_content_three.value }}</p>
+		  </div>
+		</div>
