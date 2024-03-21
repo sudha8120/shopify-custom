@@ -54,8 +54,6 @@ css=>	{%- style -%}
 	      {
           "type": "select",
           "id": "custom_font_weight",
-          "label": "Font weight",
-          "default": "400",
           "options": [ 
             {
               "value": "bold",
@@ -65,7 +63,9 @@ css=>	{%- style -%}
               "value": "100",
               "label": "100"
             },         
-          ]
+          ]         
+          "label": "Font weight",
+          "default": "400",
         },
         {
           "type": "select",
@@ -235,8 +235,7 @@ header-dropdown-menu.liquid
 line no. 36
 <li>{%- if childlink.type == 'collection_link' -%} {% assign linkCollection = childlink.object %} <div class="nav-collection_image"> <img crossorigin="anonymous" class="nav-child-link-image" src="{{linkCollection.products.first.featured_image.src | product_img_url: '140x'}}" alt="{{grandchild_link.title}}"> </div> {%- endif -%}
 
-<a></a><
-/li>
+<a></a></li>
                    
  
  ============== shopify collection tab -===============
@@ -259,7 +258,97 @@ code ----
 {{ short_description }}
 </div>
 
+Product Multiple Image 
+code-   
 
+  {% assign images= product.metafields.custom.product_group_image.value %}
+<div class="product-cst-uniq-selling">
+  <div class="container">    
+  {{ product.metafields.custom.product_group_image | metafield_tag }}
+  <div class="customers_unique_add_image">
+    <ul>
+   {% for media in images %}
+     <li><img src="{{ media | img_url:'master' }}"></li>
+   {% endfor %}
+   </ul>
+  </div>
+  </div> 
+</div>
+
+********************images  media tag ================
+{{ media | image_url: width: 400 | image_tag }}
+
+{% assign images= product.metafields.custom.product_group_image.value %}
+<div class="product-cst-uniq-selling">
+  <div class="customers_unique_add_image">
+    <ul>
+   {% for media in images %}
+     <li><a href="{{ product.url }}">{{ media | image_url: width: 400 | image_tag }}</a></li>      
+   {% endfor %}
+   </ul>
+  </div>
+</div>
+
+****************** Single Images show 
+
+{% assign images= product.metafields.custom.product_icon_first %}
+
+<div class="prodct-img"> <img src="{{ images | img_url:'master' }}"></div>     
+    <p>{{ images | image_url: width: 400 | image_tag }}    </p>
+  </div>
+
+************ Richtext Metafield
+
+{{ product.metafields.custom.product_richtext | metafield_tag }}
+
+
+***********8 Multiple video 
+{% assign media = product.metafields.custom.product_video.value %}
+{% if media.media_type == 'video' %}
+    {{ media | video_tag: image_size: '1000x', controls: true, autoplay: true }}
+{% endif %}
+
+example --
+{% assign images= product.metafields.custom.product_icon_first.value %}
+{% assign images2= product.metafields.custom.product_icon_two.value %}
+{% assign images3= product.metafields.custom.product_icon_three.value %}
+ <h3>Single Image text </h3>
+<div class="product-icon">
+
+  <div class="icon_1">  
+   {% if product.metafields.custom.product_icon_first.value != blank  %}
+      <div class="prodct-img"> {{ images | image_url: width: 100 | image_tag }}</div>     
+      <p>{{ product.metafields.custom.product_content_first.value }}</p>
+   {% endif %}
+  </div>
+  <div class="icon_1">  
+    {% if product.metafields.custom.product_icon_two.value != blank  %}
+    <div class="prodct-img"> {{ images2 | image_url: width: 100 | image_tag }}</div>     
+    <p>{{ product.metafields.custom.product_content_two.value }}</p>
+    {% endif %}
+  </div>
+  <div class="icon_1">  
+    {% if product.metafields.custom.product_icon_three.value != blank  %}
+    <div class="prodct-img"> {{ images3 | image_url: width: 100 | image_tag }}</div>     
+    <p>{{ product.metafields.custom.product_content_three.value }}</p>
+    {% endif %}
+  </div>
+</div>
+
+ 
+
+{% assign images= product.metafields.custom.product_group_image.value %}
+<div class="product-cst-uniq-selling">
+  <h3>Muliple Images meta filed </h3>
+  <div class="customers_unique_add_image">
+    <ul>
+   {% for media in images %}
+     <li>{{ media | image_url: width: 400 | image_tag }}</li>      
+   {% endfor %}
+   </ul>
+  </div>
+</div>
+{{ product.metafields.custom.product_richtext | metafield_tag }}
 
 
 ===================== add to cart page ridirect 
@@ -275,7 +364,23 @@ code ----
 </form>
 
 
-===================================
+=================================== add to cart button redirect to cart page 
+
+https://www.huratips.com/tech-tips/how-to-add-add-to-cart-button-on-shopify-collection-pages-for-each-product.html
+
+step - {% for product in collection.products %}
+        loop inside -
+
+<form action="/cart/add" method="post">
+{% if product.variants.size == 1 %}
+<input type="hidden" name="id" value="{{ product.variants.first.id }}" />
+{% else %}
+<select name="id">{% for variant in product.variants %}<option value="{{ variant.id }}">{{ variant.title }}</option>{% endfor %}</select>
+{% endif %}
+<div><button type="submit" name="add">Add to cart</button></div>  
+</form>
+
+
 
 
 https://community.shopify.com/c/shopify-design/accordion-with-shopify-s-dawn-theme/td-p/1339698
@@ -337,6 +442,7 @@ schema--
      "default": false,
      "label": "Description by default"
      },
+
 *********************8 if else condition ********
 {% if coll_image != blank %}                     
                   <div class="custm_collectionimage">
@@ -344,6 +450,7 @@ schema--
                   </div>
             
                 {% else %}    
+
 
 ************** Image list metafield *********
 
@@ -695,7 +802,7 @@ add cass--
 3. bikolether  shre preview- https://uyoezgza1uqbc94o-84856504619.shopifypreview.com
 4. https://lestroispyramides.com/
 5. https://saafgarments.com/
-6. https://xypler.com/  - Dawn 
+6.n https://xypler.com/  - Dawn 
 7. https://9bd82c-2.myshopify.com/ 
 8. https://functionallabs.co.uk/  - Motion
 9. https://www.mrbur.com/  - theme-dame -Local
@@ -703,3 +810,121 @@ add cass--
 11. https://sassyslick.com/  - Ella - Multipurpose Shopify Theme
 12. https://denshotdogs.com/ - Canopy
 13  https://denshotdogs.com/
+
+
+
+https://websensepro.com/blog/how-to-show-selected-variant-images-dawn-13-0-0/
+
+
+************** annimation css 
+https://devsnap.me/css-image-effects
+button hoer
+https://dev.to/afif/100-underline-overlay-animation-the-ultimate-css-collection-4p40
+
+
+=============================
+
+  {%- when 'key_features' -%}
+    <div class="key_features" {{ block.shopify_attributes }}>
+    <ul id="key_details-{{ block.id }}-{{ section.id }}">
+    <li>
+      <div class="key_featues-icon">
+       {{ block.settings.key_list_image | image_url: width: 60 | image_tag }}
+      </div>
+      <div class="key_features-content">
+        {{block.settings.key_list }}
+      </div>
+    </li>
+    </ul>
+    </div>
+
+    schema- addd
+    {
+    "type": "key_features",
+    "name": "Key Features",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "key_list_image",
+        "label": "Key List Image"
+      },
+      {
+        "type": "text",
+        "id": "key_list",
+        "label": "Key List"
+        }
+      ]
+    },
+
+    add css-
+
+    #preview-bar-iframe {
+  }
+
+  .key_features {
+    margin: 0 !important;
+  }
+
+  .key_features ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+  }
+
+  .key_features ul li:marker {
+    display: none;
+  }
+
+
+  .key_features ul li {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .key_features ul li>div {
+    padding: 1rem 1rem 0 0;
+  }
+========================= dummy video link 
+
+https://www.pexels.com/video/dog-eating-854132/
+
+.header__icons.header__icons {
+    justify-self: flex-start;
+}
+  .header--middle-left {
+    grid-template-columns: 1fr auto 1fr;
+  }
+  .right-sale .card__badge.bottom.left {
+    display: block;
+}
+
+.product-sale {
+    display: flex;
+}
+
+
+https://stackoverflow.com/questions/31401389/how-to-make-confirm-password-field-in-shopify
+
+
+image swatch --------------
+
+https://community.shopify.com/c/shopify-design/image-swatch-on-dawn-theme/td-p/2271711
+
+ <div class='account-list account-sidebar'>
+   <ul> 
+    <li><h2><a href="{{ routes.account_url }}">Profile</a></h2></li>
+    <li><h2><a href="{{ routes.account_url }}">{{ 'customer.order.title' | t: name: order.name }}</a></h2> </li>
+    <li><h2><a href="{{ routes.account_addresses_url }}">{{ 'customer.addresses.title' | t }}</a></h2></li>    
+    <li> <h2><a href="{{ routes.account_logout_url }}">{{ 'customer.log_out' | t }}</a></h2></li>
+   </ul>    
+</div>
+customer_order_url
+
+
+
+
+https://codepen.io/jwkicklighter/pen/KKKdagv
